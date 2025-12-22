@@ -44,6 +44,9 @@ class YaSchedule:
             from_lng: str,
             to_lat: str,
             to_lng: str,
+            date: str = "",
+            transport_types: str = "",
+            transfers: bool = False,
         ) -> dict:
         from_code: str = self._get_city_info(from_lat, from_lng).get("code")
         to_code: str = self._get_city_info(to_lat, to_lng).get("code")
@@ -52,6 +55,17 @@ class YaSchedule:
             "from": from_code,
             "to": to_code,
         }
+        if date:
+            params["date"] = date
+
+        if transport_types:
+            if transport_types not in ["plane", "bus", "train", "suburban", "water", "helicopter"]:
+                raise ValueError("Тип траспорта может быть одним из этих - plane, bus, train, suburban, water, helicopter")
+            
+            params["transport_types"] = transport_types
+
+        if transfers:
+            params["transfers"] = transfers
         
         return self._make_api_request(
             method="search",
