@@ -6,9 +6,9 @@ from app import Application
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
+API_KEY_GEO = os.getenv("API_KEY_GEO")
 
 
-app = Application(API_KEY)
+app = Application(API_KEY, API_KEY_GEO)
 
-while True:
-    app.show_menu()
+app.run()
