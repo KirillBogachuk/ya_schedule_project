@@ -1,5 +1,6 @@
-import requests
 from typing import Optional
+
+import requests
 
 from utils import catch_exception
 
@@ -10,15 +11,11 @@ class YaSchedule:
     def __init__(self, api_key: str, api_key_geo: str) -> None:
         if not api_key:
             raise ValueError("Апи ключ не может быть None")
-        
+
         self.api_key = api_key
         self.api_key_geo = api_key_geo
 
-    def _make_api_request(
-            self, 
-            method: str,
-            params: dict[str, str]
-        ) -> dict:
+    def _make_api_request(self, method: str, params: dict[str, str]) -> dict:
         request_url = self.base_url + f"/{method}/"
         method_params = params.copy()
         method_params["apikey"] = self.api_key
@@ -46,7 +43,6 @@ class YaSchedule:
 
         return str(res[0].get("lat")), str(res[0].get("lon"))
 
-
     def _get_city_info(self, lat: str, lng: str) -> dict:
         params = {
             "lat": lat,
@@ -57,16 +53,16 @@ class YaSchedule:
             method="nearest_settlement",
             params=params,
         )
-    
+
     @catch_exception("Получение расписания")
     def get_schedule(
-            self,
-            city_from: str,
-            city_to: str,
-            date: str = "",
-            transport_types: str = "",
-            transfers: bool = False,
-        ) -> Optional[dict]:
+        self,
+        city_from: str,
+        city_to: str,
+        date: str = "",
+        transport_types: str = "",
+        transfers: bool = False,
+    ) -> Optional[dict]:
         from_lat, from_lng = self.__get_city_coordinates(city_from)
         to_lat, to_lng = self.__get_city_coordinates(city_to)
 
@@ -81,14 +77,11 @@ class YaSchedule:
             params["date"] = date
 
         if transport_types:
-            if transport_types not in ["plane", "bus", "train", "suburban", "water", "helicopter", "", None]:
-                raise ValueError("Тип траспорта может быть одним из этих - plane, bus, train, suburban, water, helicopter")
-            
             params["transport_types"] = transport_types
 
         if transfers:
             params["transfers"] = "false" if not transfers else "true"
-        
+
         return self._make_api_request(
             method="search",
             params=params,
